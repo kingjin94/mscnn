@@ -1,0 +1,3 @@
+Extension Length: Whole
+Connection: Each layer
+Extension width (of main layer): 1/16

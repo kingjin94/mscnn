@@ -1,0 +1,3 @@
+Extension Length: Down from Layer 3
+Connection: Each layer
+Extension width (of main layer): 1/8
