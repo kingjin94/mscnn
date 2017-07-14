@@ -49,3 +49,4 @@ WORKDIR /home/
 
 # Make mscnn src available
 RUN git clone https://github.com/kingjin94/mscnn.git /home/mscnn/
+RUN g++ /home/mscnn/examples/kitti_result/eval/evaluate_object.cpp -o /home/mscnn/examples/kitti_result/eval/evaluate_object
