@@ -8,8 +8,8 @@ clear all; close all;
 addpath('../../matlab/');
 addpath('../../utils/');
 
-root_dir = 'mscnn-8s-768-trainval-pretrained/';
-binary_file = [root_dir 'mscnn_kitti_trainval_2nd_iter_35000.caffemodel'];
+root_dir = 'mscnn-7s-384/';
+binary_file = [root_dir 'mscnn_kitti_train_2nd_iter_25000.caffemodel'];
 assert(exist(binary_file, 'file') ~= 0);
 definition_file = [root_dir 'mscnn_deploy.prototxt'];
 assert(exist(definition_file, 'file') ~= 0);
@@ -24,16 +24,16 @@ end
 net = caffe.Net(definition_file, binary_file, 'test');
 
 % set KITTI dataset directory
-root_dir = '/your/KITTI/path/';
+root_dir = '/home/matthias/data/KITTI/';
 image_dir = [root_dir 'testing/image_2/'];
-comp_id = 'kitti_8s_768_35k_test';
+comp_id = 'kitti_7s_384_25k_old';
 image_list = dir([image_dir '*.png']); 
 nImg=length(image_list);
 
 % choose the right input size
-% imgW = 1280; imgH = 384;
+imgW = 1280; imgH = 384;
 % imgW = 1920; imgH = 576;
-imgW = 2560; imgH = 768;
+% imgW = 2560; imgH = 768;
 
 mu = ones(1,1,3); mu(:,:,1:3) = [104 117 123];
 mu = repmat(mu,[imgH,imgW,1]);
@@ -50,7 +50,7 @@ obj_names = {'bg','car','van','truck','tram'};
 final_detect_boxes = cell(nImg,num_cls); final_proposals = cell(nImg,1);
 proposal_thr = -10; usedtime=0; 
 
-show = 1; show_thr = 0.1;
+show = 0; show_thr = 0.1;
 if (show)
   fig=figure(1); set(fig,'Position',[-50 100 1350 375]);
   h.axes = axes('position',[0,0,1,1]);
@@ -156,7 +156,7 @@ end
 for j=1:num_cls
   id = cls_ids(j);
   save_detect_boxes=cell2mat(final_detect_boxes(:,j));
-  dlmwrite(['detections/' comp_id '_' obj_names{id} '.txt'],save_detect_boxes);
+  dlmwrite([pwd '/detections/' comp_id '_' obj_names{id} '.txt'],save_detect_boxes);
 end
 final_proposals=cell2mat(final_proposals);
 %dlmwrite(['proposals/' comp_id '.txt'],final_proposals);
