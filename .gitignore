@@ -96,3 +96,6 @@ LOCK
 LOG*
 CURRENT
 MANIFEST-*
+
+#Compiled evaluate obj
+examples/kitti_result/eval/evaluate_object
