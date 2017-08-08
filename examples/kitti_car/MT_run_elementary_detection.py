@@ -196,7 +196,7 @@ while not output_queue.empty():
     print 'Waiting for Storage'
     time.sleep(1)
     
-os.system('tar czf /home/detections_' + str(modelDir) + '.tar.gz ' + str(outputDir))
+os.system('tar czf /home/detections_' + str(modelDir) + '_' + model + '.tar.gz ' + str(outputDir))
 os.system('rm -rf ' + str(outputDir))
 print 'Done, all detections saved to: /home/detections_' + modelDir + '.tar.gz'
 
