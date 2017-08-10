@@ -1,0 +1,4 @@
+Baseline for incremental learning. For 40% the network is trained only on easy examples, the rest on all.
+
+-> In 1st round 4000 itts easy, 6000 full
+-> In 2nd round 10000 itts easy, 15000 full
