@@ -1,0 +1,4 @@
+Extension Length: Whole
+Connection: Each layer
+Extension width (of main layer): 1/4
+All Trunk layers (conv1_1 to conv 5_3) frozen from beginning
