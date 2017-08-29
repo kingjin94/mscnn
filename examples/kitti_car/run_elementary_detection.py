@@ -5,6 +5,7 @@
 
 import os as os #paths
 import sys
+import time
 
 if not len(sys.argv) == 3:
     print 'Specify modelDir and model to evaluate'
