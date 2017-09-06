@@ -1,34 +1,11 @@
-% Copyright (c) 2016 The Regents of the University of California
+% Copyright (c) 2017 TUM
 % see mscnn/LICENSE for details
-% Written by Zhaowei Cai [zwcai-at-ucsd.edu]
-% Please email me if you find bugs, or have suggestions or questions!
+% Written by Matthias Mayer 
 
+function result = finish_detection_after_server(tarFile,imgSizes)
 %% Preperation
-%profile -memory on;
-%caffe.reset_all();      %clean gpu memory
-clear all; close all;
 % Add needed paths
-%addpath('../../matlab/');
 addpath('../../utils/');    % Has Maxsuppresion code
-
-% All the needed modelpaths
-%root_dir = 'mscnn-7s-384/'; %CHANGE FOR OTHER MODEL
-%binary_file = [root_dir 'mscnn_kitti_train_2nd_iter_25000.caffemodel']; %Actual trained model
-%assert(exist(binary_file, 'file') ~= 0);
-%definition_file = [root_dir 'mscnn_deploy.prototxt'];   %Description of model
-%assert(exist(definition_file, 'file') ~= 0);
-
-% Set up caffe
-%use_gpu = true;
-%if (~use_gpu)
-%     caffe.set_mode_cpu();
-% else
-%     caffe.set_mode_gpu();
-%     gpu_id = 0; caffe.set_device(gpu_id);
-% end
-
-% Initialize a network
-% net = caffe.Net(definition_file, binary_file, 'test');
 
 % set KITTI dataset directory
 root_dir = '/home/matthias/data/KITTI/';
@@ -37,18 +14,23 @@ comp_id = 'mscnn-7s-384-lateral_augment_0125width';   %CHANGE FOR OTHER MODEL
 image_list = dir([image_dir '*.png']);  %An object that represents all pictures
 nImg=length(image_list);
 
-% Place of preliminary results from python
-resultDir = '/home/matthias/mscnn-master/examples/kitti_car/detections/detections_mscnn-7s-384-lateral_augment_0125width/';
-orgH = 375; orgW = 1242; % Size of prictures tested
+%% Untar preliminary results from python
+disp 'Untar'
+untar(tarFile,'/tmp/finish_detection');
+disp 'mv'
+system('find /tmp/finish_detection/ -name "*.txt" -exec mv {} /tmp/finish_detection/ \;') % move stuff to the right dir 
+disp 'done, begin work'
+resultDir = '/tmp/finish_detection/';
+indexSlash = regexp(tarFile,'[/]');
+lastSlash = indexSlash(end);
+resultFile = [pwd '/detections/' tarFile(lastSlash+1:end-7) '.txt'];
+%orgH = 375; orgW = 1242; % Size of prictures tested
 
+%% Model params
 % choose the right input size -> modeldependent
 imgW = 1280; imgH = 384;
 % imgW = 1920; imgH = 576;
 % imgW = 2560; imgH = 768;
-
-% Weightfungtion for color channels?
-mu = ones(1,1,3); mu(:,:,1:3) = [104 117 123];
-mu = repmat(mu,[imgH,imgW,1]);
 
 % bbox de-normalization parameters
 bbox_means = [0 0 0 0];
@@ -64,35 +46,24 @@ proposal_thr = -10; usedtime=0;
 
 show = 0; % Kills memory -> only use with some pics, not all at once
 show_thr = 0.1;
-if (show)
-    fig=figure(1); set(fig,'Position',[-50 100 1350 375]);
-    h.axes = axes('position',[0,0,1,1]);
-end
 
 %% Loop over all images
-for k = 1:7481
+for k = 1:nImg
     %% Load and prepare Image
-%    test_image = imread([image_dir image_list(k).name]);
-    if (show)
-        imshow(test_image,'parent',h.axes); axis(h.axes,'image','off'); hold(h.axes,'on');
-    end
+    %test_image = imread([image_dir num2str(k-1, '%06d') '.png']);
     %[orgH,orgW,~] = size(test_image);
+    orgH = imgSizes(k,1);
+    orgW = imgSizes(k,2);
     % Change for other dataset
     ratios = [imgH imgW]./[orgH orgW];
-    %test_image = imresize(test_image,[imgH imgW]);  %resize
-    %test_image = single(test_image(:,:,[3 2 1]));   %convert to single
-    %test_image = bsxfun(@minus, test_image, mu);    %Subtract mu from every element in test_image
-    %test_image = permute(test_image, [2 1 3]);      %Change order of channels from RGB to GRB?
+    clear test_image;
     
-    %% Network forward & timing
-    tic; 
-    %outputs = net.forward({test_image}); %Object with bbox_pred, cls_pred & proposal score
+    %% Read server results
     outputs = {dlmread([resultDir 'bbox_preds_' num2str(k-1, '%06d') '.txt'])', ...
         dlmread([resultDir 'cls_pred_' num2str(k-1, '%06d') '.txt'])', ...
         dlmread([resultDir 'tmp_' num2str(k-1, '%06d') '.txt'])'};
-    pertime=toc; usedtime=usedtime+pertime; avgtime=usedtime/k;
     
-    %clear test_image;
+
     
     %% Work on Output -> Seperate vectors
     tmp=squeeze(outputs{1}); bbox_preds = tmp'; %Bounding boxes?
@@ -183,25 +154,17 @@ for k = 1:7481
         id = cls_ids(j);
         save_detect_boxes=cell2mat(final_detect_boxes(:,j));
         if(k == 1)
-            dlmwrite([pwd '/detections/' comp_id '_' obj_names{id} '.txt'],save_detect_boxes);
+            dlmwrite(resultFile,save_detect_boxes);
         else
-            dlmwrite([pwd '/detections/' comp_id '_' obj_names{id} '.txt'],save_detect_boxes,'-append'); 
+            dlmwrite(resultFile,save_detect_boxes,'-append'); 
         end
     end
     
     if (mod(k,100)==0)
-        fprintf('idx %i/%i, avgtime=%.4fs\n',k,nImg,avgtime);
+        fprintf('idx %i/%i\n',k,nImg);
     end
 end
-
-
-%% Legacy
-%final_proposals=cell2mat(final_proposals);
-%dlmwrite(['proposals/' comp_id '.txt'],final_proposals);
-
-
-%profile report
-
-%% Clean Up
-%caffe.reset_all();
-
+% Clean up tmp
+rmdir '/tmp/finish_detection' s
+result = resultFile;
+end
