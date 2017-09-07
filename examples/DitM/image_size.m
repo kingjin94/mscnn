@@ -17,7 +17,7 @@
 %    end
 %end
 
-sizes = repmat([1914 1052],5000,1);
+sizes = repmat([384 1280],5000,1);
 
 %% Save sizes 
 dlmwrite('train_sizes.txt',sizes);

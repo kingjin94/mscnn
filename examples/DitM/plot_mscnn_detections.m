@@ -1,18 +1,18 @@
 %% read detections
-detections = dlmread('detections/detectionsOnDitM_mscnn-7s-384_mscnn_kitti_train_2nd_iter_25000.caffemodel.txt');
+detections = dlmread('detections/detections_onDitM_mscnn-7s-384_mscnn_kitti_train_2nd_iter_25000.caffemodel.txt');
 %detections(:,1) = detections(:,1)+1;
 
 %% read groundtruth
 kitti_dir = '/home/matthias/Desktop/GTA_KITTI/';
-gt_dir = '../../data/DitM/label_2/';
+gt_dir = '../../data/DitM/label_2_day/';
 
 %% read dataset
-image_list = dlmread('../../data/DitM/ImageSets_small/val.txt');
+image_list = dlmread('../../data/DitM/ImageSets_day/val.txt');
 
 %% set KITTI dataset directory
-image_dir = [kitti_dir 'training/image_2/'];
+image_dir = '../../data/DitM/image_2_day/'; %[kitti_dir 'training/image_2/'];
 %image_list = dir([image_dir '*.jpg']);  %An object that represents all pictures
-nImg=5000; %length(image_list);
+nImg=length(image_list);
 
 
 
@@ -22,12 +22,12 @@ while(go_on)
     %% Show Picture
     f = figure;
     hold on;
-    imshow([image_dir num2str(image_list(i),7) '.jpg']);
-    disp [image_dir num2str(image_list(i),7) '.jpg']
+    imshow([image_dir num2str(image_list(i),7) '.png']);
+    disp([image_dir num2str(image_list(i),7) '.png'])
     
     %% Show detection
     threshold = 0.2;
-    det_here = detections(detections(:,1)==i,:); %get boxes of picture i
+    det_here = detections(detections(:,1)==image_list(i),:) %get boxes of picture i
     det_here = det_here(det_here(:,6)>threshold, :);
     for j = 1:size(det_here,1)
         box = det_here(j,:);    % #pic, x, y, width, height, propability
@@ -56,6 +56,6 @@ while(go_on)
     end
     
     waitfor(f)
-    i = i+1
+    i = i+1;
     if(i>nImg) i = 1; end
 end

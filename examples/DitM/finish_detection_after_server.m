@@ -11,7 +11,7 @@ function result = finish_detection_after_server(tarFile,imgSizes,imgNums)
 % Add needed paths
 addpath('../../utils/');    % Has Maxsuppresion code
 
-nImg=5000; %length(image_list);
+nImg=length(imgNums);
 
 %% Untar preliminary results from python
 resultDir = '/tmp/finish_detection/'; %tmp storage
@@ -141,7 +141,7 @@ for k = 1:nImg
     
     % Save stuff
     for j=1:num_cls
-        final_detect_boxes{j}=[ones(size(final_detect_boxes{j},1),1)*(k) final_detect_boxes{j}];  %Format: img_num tx ty tw th prob
+        final_detect_boxes{j}=[ones(size(final_detect_boxes{j},1),1)*imgNums(k) final_detect_boxes{j}];  %Format: img_num tx ty tw th prob
     end
     %final_proposal = [ones(size(final_proposal,1),1) final_proposal];
     
@@ -149,9 +149,9 @@ for k = 1:nImg
         id = cls_ids(j);
         save_detect_boxes=cell2mat(final_detect_boxes(:,j));
         if(k == 1)
-            dlmwrite(resultFile,save_detect_boxes);
+            dlmwrite(resultFile,save_detect_boxes,'precision',7);
         else
-            dlmwrite(resultFile,save_detect_boxes,'-append'); 
+            dlmwrite(resultFile,save_detect_boxes,'-append','precision',7); 
         end
     end
     

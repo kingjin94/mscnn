@@ -16,7 +16,7 @@ function evalFunc(run_results, list_file)
     transform_detections(detections, result_dir, dlmread(list_file));
 
     %% Evaluate with KITTI (only for training set...)
-    gt_dir = '/home/matthias/Desktop/my_mscnn/data/DitM/label_2/';
+    gt_dir = '/home/matthias/Desktop/my_mscnn/data/DitM/label_2_day/';
 
     command_line = sprintf('/home/matthias/mscnn-master/examples/kitti_result/eval/evaluate_object %s %s %s',...
             gt_dir,result_dir,list_file);

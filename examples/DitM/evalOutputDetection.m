@@ -9,7 +9,7 @@ else
     image_size;
 end
 
-imageSet = fullfile(pwd, '../../data/DitM/ImageSets_small/val.txt')
+imageSet = fullfile(pwd, '../../data/DitM/ImageSets_day/val.txt')
 
 for i = 1:size(result_list,1)
     tmpResult = finish_detection_after_server([result_list(i).folder '/' result_list(i).name], sizes, ...
