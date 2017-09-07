@@ -99,3 +99,6 @@ MANIFEST-*
 
 #Compiled evaluate obj
 examples/kitti_result/eval/evaluate_object
+examples/DitM/train_sizes.txt
+examples/DitM/detections/*
+examples/DitM/outputDetection/*
