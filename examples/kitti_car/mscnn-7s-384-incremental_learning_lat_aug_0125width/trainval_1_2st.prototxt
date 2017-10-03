@@ -21,7 +21,7 @@ layer {
   }
   image_gt_data_param {
     source: "../../../data/kitti/window_files/mscnn_window_file_kitti_vehicle_train.txt"
-    batch_size: 1
+    batch_size: 4
     coord_num: 4
     resize_width: 1280
     resize_height: 384
@@ -78,7 +78,7 @@ layer {
   }
   image_gt_data_param {
     source: "../../../data/kitti/window_files/mscnn_window_file_kitti_vehicle_val.txt"
-    batch_size: 1
+    batch_size: 2
     coord_num: 4
     resize_width: 1280
     resize_height: 384
@@ -144,6 +144,7 @@ layer {
   type: "ReLU"
 }
 
+# 1_1p
 layer {
   bottom: "data"
   top: "conv1_1p"
@@ -216,6 +217,7 @@ layer {
   }
 }
 
+# 1_2p
 layer {
   bottom: "conv1_1"
   bottom: "conv1_1p"
@@ -302,6 +304,7 @@ layer {
   type: "ReLU"
 }
 
+# 2_1p
 layer {
   bottom: "pool1"
   bottom: "pool1p"
@@ -462,6 +465,7 @@ layer {
   type: "ReLU"
 }
 
+# 3_1p
 layer {
   bottom: "pool2"
   bottom: "pool2p"
@@ -525,6 +529,7 @@ layer {
   type: "ReLU"
 }
 
+# 3_2p
 layer {
   bottom: "conv3_1"
   bottom: "conv3_1p"
@@ -599,6 +604,7 @@ layer {
   }
 }
 
+# 3_3p
 layer {
   bottom: "conv3_2"
   bottom: "conv3_2p"
@@ -677,6 +683,7 @@ layer {
   type: "ReLU"
 }
 
+# 4_1p
 layer {
   bottom: "pool3"
   bottom: "pool3p"
@@ -740,6 +747,7 @@ layer {
   type: "ReLU"
 }
 
+# 4_2p
 layer {
   bottom: "conv4_1"
   bottom: "conv4_1p"
@@ -803,6 +811,7 @@ layer {
   type: "ReLU"
 }
 
+# 4_3p
 layer {
   bottom: "conv4_2"
   bottom: "conv4_2p"
@@ -846,8 +855,31 @@ layer {
   type: "ReLU"
 }
 
-##   LFCN_1   ##
+###############
+### LFCN 1  ###
+###############
 
+##   loss1_conv1   ##
+
+layer {
+  bottom: "conv4_3"
+  top: "loss1_conv1"
+  name: "loss1_conv1"
+  type: "Convolution"
+  convolution_param {
+    num_output: 512
+    pad: 1
+    kernel_size: 3
+  }
+}
+layer {
+  bottom: "loss1_conv1"
+  top: "loss1_conv1"
+  name: "loss_relu1"
+  type: "ReLU"
+}
+
+# loss1_conv1p
 layer {
   bottom: "conv4_3"
   bottom: "conv4_3p"
@@ -860,8 +892,8 @@ layer {
 }
 layer {
   bottom: "concatLFCN_1"
-  top: "loss1_conv1"
-  name: "loss1_conv1"
+  top: "loss1_conv1p"
+  name: "loss1_conv1p"
   type: "Convolution"
   param {
     lr_mult: 1
@@ -872,7 +904,7 @@ layer {
     decay_mult: 0
   }
   convolution_param {
-    num_output: 512
+    num_output: 64
     pad: 1
     kernel_size: 3
     weight_filler {
@@ -886,15 +918,29 @@ layer {
 }
 
 layer {
-  bottom: "loss1_conv1"
-  top: "loss1_conv1"
-  name: "loss_relu1"
+  bottom: "loss1_conv1p"
+  top: "loss1_conv1p"
+  name: "loss_relu1p"
   type: "ReLU"
 }
+
+## LFCN_1_5x5 ##
+
+# 1_5x5p
 layer {
   bottom: "loss1_conv1"
-  top: "LFCN_1_5x5"
-  name: "LFCN_1_5x5"
+  bottom: "loss1_conv1p"
+  top: "concat_loss1_conv1p"
+  name: "concat_loss1_conv1p"
+  type: "Concat"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
+  bottom: "concat_loss1_conv1p"
+  top: "LFCN_1_5x5p"
+  name: "LFCN_1_5x5p"
   type: "Convolution"
   param {
     lr_mult: 1
@@ -917,8 +963,10 @@ layer {
     }
   }
 }
+
+# loss_1_5x5
 layer {
-  bottom: "LFCN_1_5x5"
+  bottom: "LFCN_1_5x5p"
   bottom: "label_1_5x5"
   top: "loss_1_5x5"
   name: "detection_loss_1_5x5"
@@ -941,7 +989,7 @@ layer {
   loss_weight: 0.9
 }
 layer {
-  bottom: "LFCN_1_5x5"
+  bottom: "LFCN_1_5x5p"
   bottom: "label_1_5x5"
   top: "accuracy_1_5x5"
   top: "boxiou_1_5x5"
@@ -957,10 +1005,13 @@ layer {
     downsample_rate: 8
   }
 }
+
+## LFCN_1_7x7 ##
+
 layer {
-  bottom: "loss1_conv1"
-  top: "LFCN_1_7x7"
-  name: "LFCN_1_7x7"
+  bottom: "concat_loss1_conv1p"
+  top: "LFCN_1_7x7p"
+  name: "LFCN_1_7x7p"
   type: "Convolution"
   param {
     lr_mult: 1
@@ -983,8 +1034,10 @@ layer {
     }
   }
 }
+
+## Loss 1_7x7 ##
 layer {
-  bottom: "LFCN_1_7x7"
+  bottom: "LFCN_1_7x7p"
   bottom: "label_1_7x7"
   top: "loss_1_7x7"
   name: "detection_loss_1_7x7"
@@ -1007,7 +1060,7 @@ layer {
   loss_weight: 0.9
 }
 layer {
-  bottom: "LFCN_1_7x7"
+  bottom: "LFCN_1_7x7p"
   bottom: "label_1_7x7"
   top: "accuracy_1_7x7"
   top: "boxiou_1_7x7"
@@ -1074,6 +1127,7 @@ layer {
   type: "ReLU"
 }
 
+# 5_1p
 layer {
   bottom: "pool4"
   bottom: "pool4p"
@@ -1137,6 +1191,7 @@ layer {
   type: "ReLU"
 }
 
+# 5_2p
 layer {
   bottom: "conv5_1"
   bottom: "conv5_1p"
@@ -1200,6 +1255,7 @@ layer {
   type: "ReLU"
 }
 
+# 5_3p
 layer {
   bottom: "conv5_2"
   bottom: "conv5_2p"
@@ -1243,7 +1299,11 @@ layer {
   type: "ReLU"
 }
 
-##  LFCN 2  ##
+################
+###  LFCN_2  ###
+################
+
+## LFCN_2_5x5 ##
 
 layer {
   bottom: "conv5_3"
@@ -1255,11 +1315,10 @@ layer {
     axis: 1
   }
 }
-
 layer {
   bottom: "concatLFCN_2"
-  top: "LFCN_2_5x5"
-  name: "LFCN_2_5x5"
+  top: "LFCN_2_5x5p"
+  name: "LFCN_2_5x5p"
   type: "Convolution"
   param {
     lr_mult: 1
@@ -1282,8 +1341,11 @@ layer {
     }
   }
 }
+
+## Loss_2_5x5 ##
+
 layer {
-  bottom: "LFCN_2_5x5"
+  bottom: "LFCN_2_5x5p"
   bottom: "label_2_5x5"
   top: "loss_2_5x5"
   name: "detection_loss_2_5x5"
@@ -1305,7 +1367,7 @@ layer {
   }
 }
 layer {
-  bottom: "LFCN_2_5x5"
+  bottom: "LFCN_2_5x5p"
   bottom: "label_2_5x5"
   top: "accuracy_2_5x5"
   top: "boxiou_2_5x5"
@@ -1321,10 +1383,13 @@ layer {
     downsample_rate: 16
   }
 }
+
+## LFCN_2_7x7 ##
+
 layer {
   bottom: "concatLFCN_2"
-  top: "LFCN_2_7x7"
-  name: "LFCN_2_7x7"
+  top: "LFCN_2_7x7p"
+  name: "LFCN_2_7x7p"
   type: "Convolution"
   param {
     lr_mult: 1
@@ -1347,8 +1412,11 @@ layer {
     }
   }
 }
+
+## Loss_2_7x7 ##
+
 layer {
-  bottom: "LFCN_2_7x7"
+  bottom: "LFCN_2_7x7p"
   bottom: "label_2_7x7"
   top: "loss_2_7x7"
   name: "detection_loss_2_7x7"
@@ -1370,7 +1438,7 @@ layer {
   }
 }
 layer {
-  bottom: "LFCN_2_7x7"
+  bottom: "LFCN_2_7x7p"
   bottom: "label_2_7x7"
   top: "accuracy_2_7x7"
   top: "boxiou_2_7x7"
@@ -1453,6 +1521,7 @@ layer {
   type: "ReLU"
 }
 
+# 6_1p
 layer {
   bottom: "pool5"
   bottom: "pool5p"
@@ -1496,7 +1565,11 @@ layer {
   type: "ReLU"
 }
 
-##  LFCN 3  ##
+################
+###  LFCN 3  ###
+################
+
+## LFCN 3 5x5 ##
 
 layer {
   bottom: "conv6_1"
@@ -1511,8 +1584,8 @@ layer {
 
 layer {
   bottom: "concatLFCN_3"
-  top: "LFCN_3_5x5"
-  name: "LFCN_3_5x5"
+  top: "LFCN_3_5x5p"
+  name: "LFCN_3_5x5p"
   type: "Convolution"
   param {
     lr_mult: 1
@@ -1535,8 +1608,11 @@ layer {
     }
   }
 }
+
+## Loss 3_5x5 ##
+
 layer {
-  bottom: "LFCN_3_5x5"
+  bottom: "LFCN_3_5x5p"
   bottom: "label_3_5x5"
   top: "loss_3_5x5"
   name: "detection_loss_3_5x5"
@@ -1558,7 +1634,7 @@ layer {
   }
 }
 layer {
-  bottom: "LFCN_3_5x5"
+  bottom: "LFCN_3_5x5p"
   bottom: "label_3_5x5"
   top: "accuracy_3_5x5"
   top: "boxiou_3_5x5"
@@ -1574,10 +1650,13 @@ layer {
     downsample_rate: 32
   }
 }
+
+## LFCN 3_7x7 ##
+
 layer {
   bottom: "concatLFCN_3"
-  top: "LFCN_3_7x7"
-  name: "LFCN_3_7x7"
+  top: "LFCN_3_7x7p"
+  name: "LFCN_3_7x7p"
   type: "Convolution"
   param {
     lr_mult: 1
@@ -1600,8 +1679,11 @@ layer {
     }
   }
 }
+
+## Loss 3_7x7 ##
+
 layer {
-  bottom: "LFCN_3_7x7"
+  bottom: "LFCN_3_7x7p"
   bottom: "label_3_7x7"
   top: "loss_3_7x7"
   name: "detection_loss_3_7x7"
@@ -1623,7 +1705,7 @@ layer {
   }
 }
 layer {
-  bottom: "LFCN_3_7x7"
+  bottom: "LFCN_3_7x7p"
   bottom: "label_3_7x7"
   top: "accuracy_3_7x7"
   top: "boxiou_3_7x7"
@@ -1653,10 +1735,17 @@ layer {
     stride: 2
   }
 }
+
+################
+###  LFCN 4  ###
+################
+
+## LFCN 4 5x5 ##
+
 layer {
   bottom: "pool6"
-  top: "LFCN_4_5x5"
-  name: "LFCN_4_5x5"
+  top: "LFCN_4_5x5p"
+  name: "LFCN_4_5x5p"
   type: "Convolution"
   param {
     lr_mult: 1
@@ -1679,11 +1768,14 @@ layer {
     }
   }
 }
+
+## Loss 4_5x5 ##
+
 layer {
-  bottom: "LFCN_4_5x5"
+  bottom: "LFCN_4_5x5p"
   bottom: "label_4_5x5"
   top: "loss_4_5x5"
-  name: "detection_loss_4_5x5"
+  name: "detection_loss_4_5x5p"
   type: "DetectionLoss"
   detection_loss_param {
     cls_num: 5
@@ -1702,11 +1794,11 @@ layer {
   }
 }
 layer {
-  bottom: "LFCN_4_5x5"
+  bottom: "LFCN_4_5x5p"
   bottom: "label_4_5x5"
   top: "accuracy_4_5x5"
   top: "boxiou_4_5x5"
-  name: "detection_accuracy_4_5x5"
+  name: "detection_accuracy_4_5x5p"
   type: "DetectionAccuracy"
   detection_accuracy_param {
     cls_num: 5

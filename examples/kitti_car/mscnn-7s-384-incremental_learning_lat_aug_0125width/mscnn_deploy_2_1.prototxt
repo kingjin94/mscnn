@@ -1114,26 +1114,6 @@ layer {
   type: "ReLU"
 }
 
-# roi c1p
-layer {
-  bottom: "roi_pool"
-  top: "roi_c1p"
-  name: "roi_c1p"
-  type: "Convolution"
-  convolution_param {
-    num_output: 64
-    kernel_size: 3
-    #pad: 1
-  }
-}
-layer {
-  bottom: "roi_c1p"
-  top: "roi_c1p"
-  name: "roi_c1p_relu"
-  type: "ReLU"
-}
-
-
 ## FC6 ##
 
 layer {
@@ -1161,59 +1141,13 @@ layer {
   }
 }
 
-# fc6p
-layer {
-  bottom: "roi_c1"
-  bottom: "roi_c1p"
-  top: "roi_c1merge"
-  name: "concatRoi_c1"
-  type: "Concat"
-  concat_param {
-    axis: 1
-  }
-}
-layer {
-  name: "fc6p"
-  type: "InnerProduct"
-  bottom: "roi_c1merge"
-  top: "fc6p"
-  inner_product_param {
-    num_output: 512
-  }
-}
-layer {
-  name: "relu6p"
-  type: "ReLU"
-  bottom: "fc6p"
-  top: "fc6p"
-}
-layer {
-  name: "drop6p"
-  type: "Dropout"
-  bottom: "fc6p"
-  top: "fc6p"
-  dropout_param {
-    dropout_ratio: 0.5
-  }
-}
-
 ## CLS PRED ##
 
 layer {
-  bottom: "fc6"
-  bottom: "fc6p"
-  top: "fc6merge"
-  name: "concatFc6"
-  type: "Concat"
-  concat_param {
-    axis: 1
-  }
-}
-layer {
-  name: "cls_predp"
+  name: "cls_pred"
   type: "InnerProduct"
-  bottom: "fc6merge"
-  top: "cls_predp"
+  bottom: "fc6"
+  top: "cls_pred"
   inner_product_param {
     num_output: 5
   }
@@ -1222,10 +1156,10 @@ layer {
 ## BBOX Pred ##
 
 layer {
-  name: "bbox_predp"
+  name: "bbox_pred"
   type: "InnerProduct"
-  bottom: "fc6merge"
-  top: "bbox_predp"
+  bottom: "fc6"
+  top: "bbox_pred"
   inner_product_param {
     num_output: 20
   }
