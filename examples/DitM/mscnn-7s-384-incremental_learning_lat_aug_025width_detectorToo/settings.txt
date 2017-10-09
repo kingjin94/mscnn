@@ -1,0 +1,5 @@
+Basis: MSCNN trained on KITTI (mscnn-7s-384)
+1: Augment trunk (1/8 width) and freeze original trunk -> 10k itter
+2: Augment detectors, final steps and freeze original -> 25k itter
+
+Detector stage is augmented NOT replaced!
