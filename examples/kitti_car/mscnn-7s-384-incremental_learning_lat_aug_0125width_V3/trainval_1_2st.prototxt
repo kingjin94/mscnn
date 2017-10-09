@@ -21,7 +21,7 @@ layer {
     mean_value: 123
   }
   image_gt_data_param {
-    source: "../../../data/kitti/window_files/mscnn_window_file_kitti_vehicle_easy_train.txt"
+    source: "../../../data/kitti/window_files/mscnn_window_file_kitti_vehicle_train.txt"
     batch_size: 4
     coord_num: 4
     resize_width: 1280
@@ -80,7 +80,7 @@ layer {
     mean_value: 123
   }
   image_gt_data_param {
-    source: "../../../data/kitti/window_files/mscnn_window_file_kitti_vehicle_easy_val.txt"
+    source: "../../../data/kitti/window_files/mscnn_window_file_kitti_vehicle_val.txt"
     batch_size: 2
     coord_num: 4
     resize_width: 1280
@@ -127,18 +127,18 @@ layer {
   top: "conv1_1"
   name: "conv1_1"
   type: "Convolution"
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
   convolution_param {
     num_output: 64
     pad: 1
     kernel_size: 3
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
   }
 }
 layer {
@@ -148,23 +148,31 @@ layer {
   type: "ReLU"
 }
 
+# 1_1p
 layer {
   bottom: "data"
   top: "conv1_1p"
   name: "conv1_1p"
   type: "Convolution"
   param {
-    lr_mult: 0
-    decay_mult: 0
+    lr_mult: 1
+    decay_mult: 1
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
   }
   convolution_param {
     num_output: 8
     pad: 1
     kernel_size: 3
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+    }
   }
 }
 layer {
@@ -181,14 +189,18 @@ layer {
   top: "conv1_2"
   name: "conv1_2"
   type: "Convolution"
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
   convolution_param {
     num_output: 64
     pad: 1
     kernel_size: 3
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
   }
 }
 layer {
@@ -209,6 +221,7 @@ layer {
   }
 }
 
+# 1_2p
 layer {
   bottom: "conv1_1"
   bottom: "conv1_1p"
@@ -225,17 +238,24 @@ layer {
   name: "conv1_2p"
   type: "Convolution"
   param {
-    lr_mult: 0
-    decay_mult: 0
+    lr_mult: 1
+    decay_mult: 1
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
   }
   convolution_param {
     num_output: 8
     pad: 1
     kernel_size: 3
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+    }
   }
 }
 layer {
@@ -267,14 +287,18 @@ layer {
   top: "conv2_1"
   name: "conv2_1"
   type: "Convolution"
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
   convolution_param {
     num_output: 128
     pad: 1
     kernel_size: 3
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
   }
 }
 layer {
@@ -284,6 +308,7 @@ layer {
   type: "ReLU"
 }
 
+# 2_1p
 layer {
   bottom: "pool1"
   bottom: "pool1p"
@@ -300,17 +325,24 @@ layer {
   name: "conv2_1p"
   type: "Convolution"
   param {
-    lr_mult: 0
-    decay_mult: 0
+    lr_mult: 1
+    decay_mult: 1
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
   }
   convolution_param {
     num_output: 16
     pad: 1
     kernel_size: 3
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+    }
   }
 }
 layer {
@@ -327,14 +359,18 @@ layer {
   top: "conv2_2"
   name: "conv2_2"
   type: "Convolution"
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
   convolution_param {
     num_output: 128
     pad: 1
     kernel_size: 3
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
   }
 }
 layer {
@@ -371,17 +407,24 @@ layer {
   name: "conv2_2p"
   type: "Convolution"
   param {
-    lr_mult: 0
-    decay_mult: 0
+    lr_mult: 1
+    decay_mult: 1
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
   }
   convolution_param {
     num_output: 16
     pad: 1
     kernel_size: 3
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+    }
   }
 }
 layer {
@@ -418,6 +461,14 @@ layer {
     pad: 1
     kernel_size: 3
   }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
 }
 layer {
   bottom: "conv3_1"
@@ -426,6 +477,7 @@ layer {
   type: "ReLU"
 }
 
+# 3_1p
 layer {
   bottom: "pool2"
   bottom: "pool2p"
@@ -453,6 +505,13 @@ layer {
     num_output: 32
     pad: 1
     kernel_size: 3
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+    }
   }
 }
 layer {
@@ -474,6 +533,14 @@ layer {
     pad: 1
     kernel_size: 3
   }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
 }
 layer {
   bottom: "conv3_2"
@@ -482,6 +549,7 @@ layer {
   type: "ReLU"
 }
 
+# 3_2p
 layer {
   bottom: "conv3_1"
   bottom: "conv3_1p"
@@ -509,6 +577,13 @@ layer {
     num_output: 32
     pad: 1
     kernel_size: 3
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+    }
   }
 }
 layer {
@@ -530,6 +605,14 @@ layer {
     pad: 1
     kernel_size: 3
   }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
 }
 layer {
   bottom: "conv3_3"
@@ -549,6 +632,7 @@ layer {
   }
 }
 
+# 3_3p
 layer {
   bottom: "conv3_2"
   bottom: "conv3_2p"
@@ -576,6 +660,13 @@ layer {
     num_output: 32
     pad: 1
     kernel_size: 3
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+    }
   }
 }
 layer {
@@ -612,6 +703,14 @@ layer {
     pad: 1
     kernel_size: 3
   }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
 }
 layer {
   bottom: "conv4_1"
@@ -620,6 +719,7 @@ layer {
   type: "ReLU"
 }
 
+# 4_1p
 layer {
   bottom: "pool3"
   bottom: "pool3p"
@@ -647,6 +747,13 @@ layer {
     num_output: 64
     pad: 1
     kernel_size: 3
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+    }
   }
 }
 layer {
@@ -668,6 +775,14 @@ layer {
     pad: 1
     kernel_size: 3
   }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
 }
 layer {
   bottom: "conv4_2"
@@ -676,6 +791,7 @@ layer {
   type: "ReLU"
 }
 
+# 4_2p
 layer {
   bottom: "conv4_1"
   bottom: "conv4_1p"
@@ -703,6 +819,13 @@ layer {
     num_output: 64
     pad: 1
     kernel_size: 3
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+    }
   }
 }
 layer {
@@ -724,6 +847,14 @@ layer {
     pad: 1
     kernel_size: 3
   }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
 }
 layer {
   bottom: "conv4_3"
@@ -732,6 +863,7 @@ layer {
   type: "ReLU"
 }
 
+# 4_3p
 layer {
   bottom: "conv4_2"
   bottom: "conv4_2p"
@@ -759,6 +891,13 @@ layer {
     num_output: 64
     pad: 1
     kernel_size: 3
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+    }
   }
 }
 layer {
@@ -785,11 +924,11 @@ layer {
     kernel_size: 3
   }
   param {
-    lr_mult: 1
-    decay_mult: 1
+    lr_mult: 0
+    decay_mult: 0
   }
   param {
-    lr_mult: 2
+    lr_mult: 0
     decay_mult: 0
   }
 }
@@ -828,8 +967,15 @@ layer {
     num_output: 64
     pad: 1
     kernel_size: 3
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
     }
   }
+}
 layer {
   bottom: "loss1_conv1p"
   top: "loss1_conv1p"
@@ -837,10 +983,30 @@ layer {
   type: "ReLU"
 }
 
-
-
 ## LFCN_1_5x5 ##
 
+layer {
+  bottom: "loss1_conv1"
+  top: "LFCN_1_5x5"
+  name: "LFCN_1_5x5"
+  type: "Convolution"
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 9
+    pad: 2
+    kernel_size: 5
+  }
+}
+
+
+# 1_5x5p
 layer {
   bottom: "loss1_conv1"
   bottom: "loss1_conv1p"
@@ -868,6 +1034,13 @@ layer {
     num_output: 9
     pad: 2
     kernel_size: 5
+    weight_filler {
+      type: "gaussian"
+      std: 0.001
+    }
+    bias_filler {
+      type: "constant"
+    }
   }
 }
 
@@ -881,7 +1054,7 @@ layer {
   detection_loss_param {
     cls_num: 5
     coord_num: 4
-    lambda: 1
+    lambda: 0.05
     field_h: 40
     field_w: 40
     field_whr: 2
@@ -890,7 +1063,7 @@ layer {
     bb_smooth: true
     bg_threshold: 0.2
     bg_multiple: 2
-    sample_mode: "bootstrap"
+    sample_mode: "random"
     pos_neg_weighted: true
   }
   loss_weight: 0.9
@@ -916,6 +1089,26 @@ layer {
 ## LFCN_1_7x7 ##
 
 layer {
+  bottom: "loss1_conv1"
+  top: "LFCN_1_7x7"
+  name: "LFCN_1_7x7"
+  type: "Convolution"
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 9
+    pad: 3
+    kernel_size: 7
+  }
+}
+
+layer {
   bottom: "concat_loss1_conv1p"
   top: "LFCN_1_7x7p"
   name: "LFCN_1_7x7p"
@@ -932,10 +1125,18 @@ layer {
     num_output: 9
     pad: 3
     kernel_size: 7
+    weight_filler {
+      type: "gaussian"
+      std: 0.001
+    }
+    bias_filler {
+      type: "constant"
+    }
   }
 }
 
 ## Loss 1_7x7 ##
+
 layer {
   bottom: "LFCN_1_7x7p"
   bottom: "label_1_7x7"
@@ -945,7 +1146,7 @@ layer {
   detection_loss_param {
     cls_num: 5
     coord_num: 4
-    lambda: 1
+    lambda: 0.05
     field_h: 56
     field_w: 56
     field_whr: 2
@@ -954,7 +1155,7 @@ layer {
     bb_smooth: true
     bg_threshold: 0.2
     bg_multiple: 2
-    sample_mode: "bootstrap"
+    sample_mode: "random"
     pos_neg_weighted: true
   }
   loss_weight: 0.9
@@ -1019,6 +1220,14 @@ layer {
     pad: 1
     kernel_size: 3
   }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
 }
 layer {
   bottom: "conv5_1"
@@ -1055,6 +1264,13 @@ layer {
     num_output: 64
     pad: 1
     kernel_size: 3
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+    }
   }
 }
 layer {
@@ -1075,6 +1291,14 @@ layer {
     num_output: 512
     pad: 1
     kernel_size: 3
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
   }
 }
 layer {
@@ -1112,6 +1336,13 @@ layer {
     num_output: 64
     pad: 1
     kernel_size: 3
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+    }
   }
 }
 layer {
@@ -1132,6 +1363,14 @@ layer {
     num_output: 512
     pad: 1
     kernel_size: 3
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
   }
 }
 layer {
@@ -1169,6 +1408,13 @@ layer {
     num_output: 64
     pad: 1
     kernel_size: 3
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+    }
   }
 }
 layer {
@@ -1186,6 +1432,26 @@ layer {
 
 layer {
   bottom: "conv5_3"
+  top: "LFCN_2_5x5"
+  name: "LFCN_2_5x5"
+  type: "Convolution"
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 9
+    pad: 2
+    kernel_size: 5
+  }
+}
+
+layer {
+  bottom: "conv5_3"
   bottom: "conv5_3p"
   top: "concatLFCN_2"
   name: "concatLFCN_2"
@@ -1194,7 +1460,6 @@ layer {
     axis: 1
   }
 }
-
 layer {
   bottom: "concatLFCN_2"
   top: "LFCN_2_5x5p"
@@ -1233,7 +1498,7 @@ layer {
   detection_loss_param {
     cls_num: 5
     coord_num: 4
-    lambda: 1
+    lambda: 0.05
     field_h: 80
     field_w: 80
     field_whr: 2
@@ -1242,7 +1507,7 @@ layer {
     bb_smooth: true
     bg_threshold: 0.2
     bg_multiple: 2
-    sample_mode: "bootstrap"
+    sample_mode: "random"
     pos_neg_weighted: true
   }
 }
@@ -1265,6 +1530,26 @@ layer {
 }
 
 ## LFCN_2_7x7 ##
+
+layer {
+  bottom: "conv5_3"
+  top: "LFCN_2_7x7"
+  name: "LFCN_2_7x7"
+  type: "Convolution"
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 9
+    pad: 3
+    kernel_size: 7
+  }
+}
 
 layer {
   bottom: "concatLFCN_2"
@@ -1304,7 +1589,7 @@ layer {
   detection_loss_param {
     cls_num: 5
     coord_num: 4
-    lambda: 1
+    lambda: 0.05
     field_h: 112
     field_w: 112
     field_whr: 2
@@ -1313,7 +1598,7 @@ layer {
     bb_smooth: true
     bg_threshold: 0.2
     bg_multiple: 2
-    sample_mode: "bootstrap"
+    sample_mode: "random"
     pos_neg_weighted: true
   }
 }
@@ -1373,11 +1658,11 @@ layer {
   name: "conv6_1"
   type: "Convolution"
   param {
-    lr_mult: 1
-    decay_mult: 1
+    lr_mult: 0
+    decay_mult: 0
   }
   param {
-    lr_mult: 2
+    lr_mult: 0
     decay_mult: 0
   }
   convolution_param {
@@ -1385,7 +1670,6 @@ layer {
     pad: 1
     kernel_size: 3
   }
-
 }
 layer {
   bottom: "conv6_1"
@@ -1422,6 +1706,13 @@ layer {
     num_output: 64
     pad: 1
     kernel_size: 3
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+    }
   }
 }
 layer {
@@ -1436,6 +1727,27 @@ layer {
 ################
 
 ## LFCN 3 5x5 ##
+
+layer {
+  bottom: "conv6_1"
+  top: "LFCN_3_5x5"
+  name: "LFCN_3_5x5"
+  type: "Convolution"
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 9
+    pad: 2
+    kernel_size: 5
+  }
+}
+
 
 layer {
   bottom: "conv6_1"
@@ -1465,6 +1777,13 @@ layer {
     num_output: 9
     pad: 2
     kernel_size: 5
+    weight_filler {
+      type: "gaussian"
+      std: 0.001
+    }
+    bias_filler {
+      type: "constant"
+    }
   }
 }
 
@@ -1479,7 +1798,7 @@ layer {
   detection_loss_param {
     cls_num: 5
     coord_num: 4
-    lambda: 1
+    lambda: 0.05
     field_h: 160
     field_w: 160
     field_whr: 2
@@ -1488,7 +1807,7 @@ layer {
     bb_smooth: true
     bg_threshold: 0.2
     bg_multiple: 2
-    sample_mode: "bootstrap"
+    sample_mode: "random"
     pos_neg_weighted: true
   }
 }
@@ -1513,6 +1832,26 @@ layer {
 ## LFCN 3_7x7 ##
 
 layer {
+  bottom: "conv6_1"
+  top: "LFCN_3_7x7"
+  name: "LFCN_3_7x7"
+  type: "Convolution"
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 9
+    pad: 3
+    kernel_size: 7
+  }
+}
+
+layer {
   bottom: "concatLFCN_3"
   top: "LFCN_3_7x7p"
   name: "LFCN_3_7x7p"
@@ -1529,6 +1868,13 @@ layer {
     num_output: 9
     pad: 3
     kernel_size: 7
+    weight_filler {
+      type: "gaussian"
+      std: 0.001
+    }
+    bias_filler {
+      type: "constant"
+    }
   }
 }
 
@@ -1543,7 +1889,7 @@ layer {
   detection_loss_param {
     cls_num: 5
     coord_num: 4
-    lambda: 1
+    lambda: 0.05
     field_h: 224
     field_w: 224
     field_whr: 2
@@ -1552,7 +1898,7 @@ layer {
     bb_smooth: true
     bg_threshold: 0.2
     bg_multiple: 2
-    sample_mode: "bootstrap"
+    sample_mode: "random"
     pos_neg_weighted: true
   }
 }
@@ -1577,9 +1923,21 @@ layer {
 ## POOL 6 ##
 
 layer {
-  bottom: "concatLFCN_3"
+  bottom: "conv6_1"
   top: "pool6"
   name: "pool6"
+  type: "Pooling"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+
+layer {
+  bottom: "concatLFCN_3"
+  top: "pool6p"
+  name: "pool6p"
   type: "Pooling"
   pooling_param {
     pool: MAX
@@ -1596,6 +1954,26 @@ layer {
 
 layer {
   bottom: "pool6"
+  top: "LFCN_4_5x5"
+  name: "LFCN_4_5x5"
+  type: "Convolution"
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 9
+    pad: 2
+    kernel_size: 5
+  }
+}
+
+layer {
+  bottom: "pool6p"
   top: "LFCN_4_5x5p"
   name: "LFCN_4_5x5p"
   type: "Convolution"
@@ -1627,12 +2005,12 @@ layer {
   bottom: "LFCN_4_5x5p"
   bottom: "label_4_5x5"
   top: "loss_4_5x5"
-  name: "detection_loss_4_5x5"
+  name: "detection_loss_4_5x5p"
   type: "DetectionLoss"
   detection_loss_param {
     cls_num: 5
     coord_num: 4
-    lambda: 1
+    lambda: 0.05
     field_h: 320
     field_w: 320
     field_whr: 2
@@ -1641,7 +2019,7 @@ layer {
     bb_smooth: true
     bg_threshold: 0.2
     bg_multiple: 2
-    sample_mode: "bootstrap"
+    sample_mode: "random"
     pos_neg_weighted: true
   }
 }
@@ -1650,7 +2028,7 @@ layer {
   bottom: "label_4_5x5"
   top: "accuracy_4_5x5"
   top: "boxiou_4_5x5"
-  name: "detection_accuracy_4_5x5"
+  name: "detection_accuracy_4_5x5p"
   type: "DetectionAccuracy"
   detection_accuracy_param {
     cls_num: 5
@@ -1665,13 +2043,13 @@ layer {
 
 #=================== proposal ======================
 layer {
-  bottom: "LFCN_1_5x5p"
-  bottom: "LFCN_1_7x7p"
-  bottom: "LFCN_2_5x5p"
-  bottom: "LFCN_2_7x7p"
-  bottom: "LFCN_3_5x5p"
-  bottom: "LFCN_3_7x7p"
-  bottom: "LFCN_4_5x5p"
+  bottom: "LFCN_1_5x5"
+  bottom: "LFCN_1_7x7"
+  bottom: "LFCN_2_5x5"
+  bottom: "LFCN_2_7x7"
+  bottom: "LFCN_3_5x5"
+  bottom: "LFCN_3_7x7"
+  bottom: "LFCN_4_5x5"
   top: "proposals"
   name: "proposals"
   type: "BoxOutput"
@@ -1781,7 +2159,7 @@ layer {
 layer {
   name: "roi_pool_org"
   type: "ROIPooling"
-  bottom: "concatLFCN_1"
+  bottom: "conv4_3"
   bottom: "rois"
   top: "roi_pool_org"
   roi_pooling_param {
@@ -1794,7 +2172,7 @@ layer {
 layer {
   name: "roi_pool_ctx"
   type: "ROIPooling"
-  bottom: "concatLFCN_1"
+  bottom: "conv4_3"
   bottom: "rois"
   top: "roi_pool_ctx"
   roi_pooling_param {
@@ -1948,9 +2326,9 @@ layer {
   top: "loss_cls"
   name: "loss_cls"
   type: "SoftmaxWithLoss"
-  loss_weight: 1
   propagate_down: 1
   propagate_down: 0
+  loss_weight: 0
 }
 layer {
   name: "cls_accuracy"
@@ -1958,6 +2336,7 @@ layer {
   bottom: "cls_pred"
   bottom: "proposal_labels"
   top: "cls_accuracy"
+  #loss_weight: 0
 }
 layer {
   name: "loss_bbox"
@@ -1967,7 +2346,7 @@ layer {
   bottom: "box_inside_weights"
   bottom: "box_outside_weights"
   top: "loss_bbox"
-  loss_weight: 1
+  loss_weight: 0
 }
 layer {
   name: "bbox_iou"
@@ -1981,4 +2360,5 @@ layer {
     bbox_mean: 0 bbox_mean: 0 bbox_mean: 0 bbox_mean: 0
     bbox_std: 0.1 bbox_std: 0.1 bbox_std: 0.2 bbox_std: 0.2
   }
+  #loss_weight: 0
 }

@@ -308,7 +308,7 @@ layer {
     decay_mult: 0
   }
   convolution_param {
-    num_output: 32
+    num_output: 8
     pad: 1
     kernel_size: 3
   }
@@ -379,7 +379,7 @@ layer {
     decay_mult: 0
   }
   convolution_param {
-    num_output: 32
+    num_output: 8
     pad: 1
     kernel_size: 3
   }

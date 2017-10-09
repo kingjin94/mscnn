@@ -1,0 +1,3 @@
+fullFreeze of easy net
+different width (even height) of extension
+complete cycle on easy (1st and 2nd phase) than augment and both cycles again

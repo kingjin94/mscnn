@@ -1,0 +1,4 @@
+1_1: only easy - standard net and training for 4k
+2_1: only easy - extended net as in 1_2 plus all the additional layers from phase 2 for 10k
+1_2: all cars - conv1_1 to conv6_1 no longer learn, whole net receives lateral augmentation for 6k
+2_2: all cars - extended net as in 1_2 plus all the additional layers from phase 2, conv1_1p to conv2_2p no longer learn for 15k
