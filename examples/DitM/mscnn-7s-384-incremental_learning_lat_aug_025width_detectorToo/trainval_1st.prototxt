@@ -8,6 +8,7 @@ layer {
   top: "label_3_5x5"
   top: "label_3_7x7"
   top: "label_4_5x5"
+  top: "gt_boxes"
   name: "data"
   type: "ImageGtData"
   include {
@@ -65,6 +66,7 @@ layer {
   top: "label_3_5x5"
   top: "label_3_7x7"
   top: "label_4_5x5"
+  top: "gt_boxes"
   name: "data"
   type: "ImageGtData"
   include {
