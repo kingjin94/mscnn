@@ -6,8 +6,9 @@
 
 function transform_detections(detections, dir, list_file) 
     num_files =  length(list_file);
-    kitti_dir = '/home/matthias/data/KITTI/';
-    addpath([kitti_dir 'devkit/matlab/']);
+    %kitti_dir = '/home/matthias/data/KITTI/';
+    %addpath([kitti_dir 'devkit/matlab/']);
+    addpath('../../matlab/KITTI_devKit')
     %cd dir
     mkdir(dir, 'data/')
     for(i = 1:num_files)

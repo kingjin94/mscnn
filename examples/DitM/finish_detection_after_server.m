@@ -22,6 +22,7 @@ system(['tar xzf ' tarFile ' -C /tmp/finish_detection/ --strip-components=2']); 
 disp 'done, begin work'
 indexSlash = regexp(tarFile,'[/]');
 lastSlash = indexSlash(end);
+mkdir('detections');
 resultFile = [pwd '/detections/' tarFile(lastSlash+1:end-7) '.txt'];
 
 %% Model params

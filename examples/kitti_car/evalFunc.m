@@ -1,3 +1,8 @@
+% Evaluates the run results that were postprocessed into the long list of
+% detections on all images. Results (precision-recal curves) will be put in
+% detection/<tmpResultName>/plot/
+
+
 function evalFunc(run_results)
     %% Change format to KITTI standard
     %test if empty
@@ -7,15 +12,15 @@ function evalFunc(run_results)
         return
     end
     detections = dlmread(['detections/' run_results]); %Results from run_mscnn_detection_backup.m
-    result_dir = ['/home/matthias/mscnn-master/examples/kitti_car/detections/' run_results(1:end-4) '/'];
+    result_dir = [pwd '/detections/' run_results(1:end-4) '/'];
     transform_detections(detections, result_dir);
 
     %% Evaluate with KITTI (only for training set...)
     kitti_dir = '/home/matthias/data/KITTI/';
     gt_dir = [kitti_dir 'training/label_2/'];
-    list_dir = ['/home/matthias/mscnn-master/data/kitti/ImageSets/val.txt'];
+    list_dir = [pwd '/../../data/kitti/ImageSets/val.txt'];
 
-    command_line = sprintf('/home/matthias/mscnn-master/examples/kitti_result/eval/evaluate_object %s %s %s',...
+    command_line = sprintf('../kitti_result/eval/evaluate_object %s %s %s',...
             gt_dir,result_dir,list_dir);
     system(command_line);
 

@@ -8,11 +8,10 @@ function result = finish_detection_after_server(tarFile,imgSizes)
 addpath('../../utils/');    % Has Maxsuppresion code
 
 % set KITTI dataset directory
-root_dir = '/home/matthias/data/KITTI/';
-image_dir = [root_dir 'training/image_2/']; %gt only available for training set!!!
-comp_id = 'mscnn-7s-384-lateral_augment_0125width';   %CHANGE FOR OTHER MODEL
-image_list = dir([image_dir '*.png']);  %An object that represents all pictures
-nImg=length(image_list);
+%root_dir = '/home/matthias/data/KITTI/';
+%image_dir = [root_dir 'training/image_2/']; %gt only available for training set!!!
+%image_list = dir([image_dir '*.png']);  %An object that represents all pictures
+nImg=7481;%length(image_list);
 
 %% Untar preliminary results from python
 disp 'Untar'
@@ -23,6 +22,7 @@ disp 'done, begin work'
 resultDir = '/tmp/finish_detection/';
 indexSlash = regexp(tarFile,'[/]');
 lastSlash = indexSlash(end);
+mkdir('detections/')
 resultFile = [pwd '/detections/' tarFile(lastSlash+1:end-7) '.txt'];
 %orgH = 375; orgW = 1242; % Size of prictures tested
 

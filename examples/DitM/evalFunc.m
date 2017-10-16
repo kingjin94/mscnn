@@ -15,10 +15,10 @@ function evalFunc(run_results, list_file)
     result_dir = [pwd '/detections/' run_results(1:end-4) '/'];
     transform_detections(detections, result_dir, dlmread(list_file));
 
-    %% Evaluate with KITTI (only for training set...)
+    %% Evaluate with DitM -> Make sure ground truth is in the right directory!
     gt_dir = '/home/matthias/Desktop/my_mscnn/data/DitM/label_2_day/';
 
-    command_line = sprintf('/home/matthias/mscnn-master/examples/kitti_result/eval/evaluate_object %s %s %s',...
+    command_line = sprintf('../kitti_result/eval/evaluate_object %s %s %s',...
             gt_dir,result_dir,list_file);
     system(command_line);
 

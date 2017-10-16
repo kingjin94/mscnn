@@ -1,7 +1,6 @@
 % set KITTI dataset directory
 root_dir = '/home/matthias/data/KITTI/';
 image_dir = [root_dir 'training/image_2/']; %gt only available for training set!!!
-comp_id = 'mscnn-7s-384-lateral_augment_0125width';   %CHANGE FOR OTHER MODEL
 image_list = dir([image_dir '*.png']);  %An object that represents all pictures
 nImg=length(image_list);
 
