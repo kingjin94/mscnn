@@ -1,6 +1,6 @@
 FROM nvidia/cuda:8.0-cudnn5-devel-ubuntu16.04
 # Old: cuda:7.5-cudnn5-devel-ubuntu14.04
-MAINTAINER caffe-maint@googlegroups.com
+MAINTAINER matthias.mayer@tum.de
 
 # Rm NVIDIA sources which fail while apt-get update
 RUN rm -r /etc/apt/sources.list.d/ 
