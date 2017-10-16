@@ -2,6 +2,9 @@ FROM nvidia/cuda:8.0-cudnn5-devel-ubuntu16.04
 # Old: cuda:7.5-cudnn5-devel-ubuntu14.04
 MAINTAINER caffe-maint@googlegroups.com
 
+# Rm NVIDIA sources which fail while apt-get update
+RUN rm -r /etc/apt/sources.list.d/ 
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
         build-essential nano \
         cmake \
@@ -31,7 +34,7 @@ WORKDIR $CAFFE_ROOT
 # FIXME: clone a specific git tag and use ARG instead of ENV once DockerHub supports this.
 ENV CLONE_TAG=master
 
-RUN ls
+RUN pip install --upgrade pip && pip install setuptools
 # Install python basics
 RUN git clone -b ${CLONE_TAG} --depth 1 https://github.com/kingjin94/mscnn.git . && \
     for req in $(cat python/requirements.txt) pydot; do pip install $req; done && \
