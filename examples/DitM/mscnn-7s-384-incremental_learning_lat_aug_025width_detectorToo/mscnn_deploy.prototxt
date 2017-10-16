@@ -1333,9 +1333,19 @@ layer {
 
 # fc6p
 layer {
+  bottom: "roi_c1"
+  bottom: "roi_c1p"
+  top: "roi_c1merge"
+  name: "concatRoi_c1"
+  type: "Concat"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
   name: "fc6p"
   type: "InnerProduct"
-  bottom: "roi_c1p"
+  bottom: "roi_c1merge"
   top: "fc6p"
   inner_product_param {
     num_output: 1024

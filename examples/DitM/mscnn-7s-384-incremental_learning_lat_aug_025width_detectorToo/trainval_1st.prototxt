@@ -55,6 +55,7 @@ layer {
     min_scale: 40
     max_scale: 320
     shuffle: true
+    output_gt_boxes: true
   }
 }
 layer {
@@ -111,6 +112,7 @@ layer {
     fg_threshold: 0.5
     do_multiple_scale: false
     shuffle: true
+    output_gt_boxes: true
   }
 }
 
