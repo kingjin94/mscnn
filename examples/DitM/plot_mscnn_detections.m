@@ -1,5 +1,5 @@
 %% read detections
-detections = dlmread('detections/detections_onDitM_mscnn-7s-384_mscnn_kitti_train_2nd_iter_25000.caffemodel.txt');
+detections = dlmread('detections/detections_onDitM_mscnn-7s-384-finetune_from_kitti_mscnn_kitti_train_2nd_iter_8000.caffemodel.txt');
 %detections(:,1) = detections(:,1)+1;
 
 %% read groundtruth

@@ -1,6 +1,6 @@
 %% Runs Kitti Eval Script against gt from DitM and plots precision recall curve
 % Input:
-%  - run_results: dir of detections in Kitti format
+%  - run_results: dir of detections in temporary big file format
 %  - list_file: list of all images to be evaluated
 
 function evalFunc(run_results, list_file)

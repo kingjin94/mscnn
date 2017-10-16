@@ -1,4 +1,4 @@
-tag = 'detections_mscnn-7s-384_mscnn_kitti_train_2';
+tag = 'detections_mscnn-7s-384-incremental_learning_lat_aug_025width_mscnn_kitti_train_2';
 timeSeries = precisionRecallOverTime(tag);
 
 %% Precision Recall over time

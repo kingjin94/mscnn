@@ -18,7 +18,7 @@ resultDir = '/tmp/finish_detection/'; %tmp storage
 disp 'Untar'
 system(['rm -r ' resultDir]);
 system(['mkdir ' resultDir]);
-system(['tar xzf ' tarFile ' --strip-components=2 -C /tmp/finish_detection/']);
+system(['tar xzf ' tarFile ' -C /tmp/finish_detection/ --strip-components=2']); %Normally 2!!!
 disp 'done, begin work'
 indexSlash = regexp(tarFile,'[/]');
 lastSlash = indexSlash(end);
