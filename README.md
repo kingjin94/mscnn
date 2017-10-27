@@ -1,106 +1,157 @@
-## A Unified Multi-scale Deep Convolutional Neural Network for Fast Object Detection
+Manual MSCNN {#app:man}
+============
 
-by Zhaowei Cai, Quanfu Fan, Rogerio Feris and Nuno Vasconcelos
+The following sections will describe how one may reproduce the
+experiments from my Bachelor Thesis. It will list the required software and data and show how to use them step by step.
 
-This implementation is written by Zhaowei Cai at UC San Diego.
+Required Data and Software
+--------------------------
 
-### Introduction
+First of all one will need to install the software that ran the
+experiments. Major parts of it are in the following git repository in
+the form of Python and MATLAB scripts as well as the C++/ CUDA source
+code of Caffe and MS-CNN: <https://github.com/kingjin94/mscnn.git>\
+The git repository is expected to be cloned into &lt;ThesisRoot&gt;/.
+Now one has two choices, either compile MS-CNN oneself or *preferably*
+one can build the Docker-image which runs MS-CNN. If one wants to
+compile the source by himself please follow the description given by
+MS-CNN in their git repository (<https://github.com/zhaoweicai/mscnn>)
+and note that the needed source is already within &lt;ThesisRoot&gt;/.\
+If one chooses the Docker-image, first ensure that NVIDIA-Docker is
+installed. The process is described here:
+<https://github.com/NVIDIA/nvidia-docker>. After installing
+NVIDIA-Docker please build the Docker-image with the dockerfile found in
+&lt;ThesisRoot&gt;/docker/standalone/gpu/ and label it caffe:MSCNN.\
+Regardless of the chosen way to install the software additionally the
+used datasets are needed:
 
-MS-CNN is a unified multi-scale object detection framework based on deep convolutional networks, which includes an object proposal sub-network and an object detection sub-network. The unified network can be trained altogether end-to-end. 
+-   KITTI Object Detection Evaluation 2012  [@KITTIWebsite]: Left color
+    images[^1] and Labels[^2]
 
-### Citations
+-   DitM  [@DitMWebsite]: 200k Archive images[^3] or Subset used in this
+    thesis[^4]
 
-If you use our code/model/data, please cite our paper:
+-   DitM labels in KITTI format:
+    &lt;ThesisRoot&gt;/data/DitM/label\_2\_DitM.tar.gz
 
-    @inproceedings{cai16mscnn,
-      author = {Zhaowei Cai and Quanfu Fan and Rogerio Feris and Nuno Vasconcelos},
-      Title = {A Unified Multi-scale Deep Convolutional Neural Network for Fast Object Detection},
-      booktitle = {ECCV},
-      Year  = {2016}
-    }
+-   Subsets (to be found under:
+    &lt;ThesisRoot&gt;/data/{KITTI|DitM}/ImageSets/)
 
-### Updates
+-   Windowfiles (to be found under:
+    &lt;ThesisRoot&gt;/data/{KITTI|DitM}/window\_files/)
 
-This repository is merged to the latest Caffe. There is very minor numerical difference from the old version. By using the latest vresions of Caffe, CUDA and cuDNN, the speeds could be doubled. If you want to use the old version of code, you can download it from [MSCNN-V1.0](http://www.svcl.ucsd.edu/projects/mscnn/mscnn_v1.0.zip). 
+-   VGG\_16  [@VGG16]: <https://goo.gl/LCzWV8>, to be saved in
+    &lt;models&gt;/
 
-### Requirements
+Both datasets are expected to be in folders named &lt;KITTIRoot&gt;/ and
+&lt;DitMRoot&gt;/ respectively. The KITTI dataset is the blueprint for
+the folder structure, therefore some alterations to DitM have to be
+made:
 
-1. cuDNN is required to avoid the issue of out-of-memory and have the same running speed described in our paper. For now, CUDA 8.0 with cuDNN v5 is tested. The other versions should be working.
+-   Move the images from the DitM 200k or the smaller subset to the
+    folder &lt;DitMRoot&gt;/image\_2/
 
-2. If you want to use our MATLAB scripts to run the detection demo, caffe MATLAB wrapper is required. Please build matcaffe before running the detection demo. 
+-   Extract the labels form DitM, found in
+    &lt;ThesisRoot&gt;/data/DitM/label\_2\_DitM.tar.gz, to
+    &lt;DitMRoot&gt;/label\_2/
 
-3. This code has been tested on Ubuntu 14.04 with an NVIDIA Titan GPU.
+-   If one uses the 200k archive: Resize the images by first of all
+    rescaling to 1280 width (with constant aspect ratio) and than
+    cropping to a height of 384 by equally cutting off top and bottom.
+    Furthermore convert them to .png
 
-### Installation
+After the datasets are set up one has to adapt the evaluation scripts to
+the setup:
 
-1. Clone the MS-CNN repository, and we'll call the directory that you cloned MS-CNN into `MSCNN_ROOT`
-    ```Shell
-    git clone https://github.com/zhaoweicai/mscnn.git
-    ```
-  
-2. Build MS-CNN
-    ```Shell
-    cd $MSCNN_ROOT/
-    # Follow the Caffe installation instructions here:
-    #   http://caffe.berkeleyvision.org/installation.html
+-   In &lt;ThesisRoot&gt;/examples/{KITTI|DitM}/evalFunc.m adapt line 20
+    to the appropriate ground-truth directory, which is
+    &lt;KITTIRoot&gt;/training/label\_2/ or &lt;DitMRoot&gt;/label\_2/
+    respectively.
 
-    # If you're experienced with Caffe and have all of the requirements installed
-    # and your Makefile.config in place, then simply do:
-    make all -j 16
+-   In &lt;ThesisRoot&gt;/examples/KITTI/image\_size.m change the line 2
+    to &lt;KITTIRoot&gt;/
 
-    # If you want to use MSCNN detection demo, build MATLAB wrapper as well
-    make matcaffe
-    ```
+-   Compile evaluate\_object.cpp in
+    &lt;ThesisRoot&gt;/examples/kitti\_result/eval/ with g++ or another
+    C++ compiler; name the program evaluate\_object
 
-### Training MS-CNN (KITTI car)
+Training the CNNs
+-----------------
 
-1. Set up KITTI dataset by yourself.
+Training with the provided docker image is quiet easy. One has to first
+run the images with the data mounted at the right place. This is done
+by:
 
-2. Get the training data for KITTI
-    ```Shell
-    cd $MSCNN_ROOT/data/
-    sh get_kitti_data.sh
-    ```
-    
-    This will download train/val split image lists for the experiments, and window files for training/finetuning MS-CNN models. You can also use the provided MATLAB scripts `mscnn_kitti_car_window_file.m` under `$MSCNN_ROOT/data/kitti/` to generate your own window files. If you use the provided window files, replace `/your/KITTI/path/` in the files to your KITTI path.
+For KITTI:
 
-3. Download VGG16 from [Caffe Model Zoo](https://github.com/BVLC/caffe/wiki/Model-Zoo), and put it into `$MSCNN_ROOT/models/VGG/`.
+``` {.bash language="bash"}
+sudo nvidia-docker run -ti -v <KITTIRoot>/:/home/data/KITTI/ \
+-v <ThesisRoot>/examples/:/home/mscnn/examples/ \
+-v <ThesisRoot>/data/:/home/mscnn/data/ \
+-v <models>/:/home/mscnn/models/ caffe:MSCNN
+```
 
-4. Now you can start to train MS-CNN models. Multiple shell scripts are provided to train different models described in our paper. We take `mscnn-7s-576-2x` for example. 
-    ```Shell
-    cd $MSCNN_ROOT/examples/kitti_car/mscnn-7s-576-2x/
-    sh train_mscnn.sh
-    ```
-   As described in the paper, the training process is split into two steps. Usually the first step can be shared by different models if you only have modifications on detection sub-network. For example, the first training step can be shared by `mscnn-7s-576-2x` and `mscnn-7s-576`. Meanwhile, log files will be generated along the training procedures. 
- 
+For DitM:
 
-### Pretrained model (KITTI car)
+``` {.bash language="bash"}
+sudo nvidia-docker run -ti -v <DitMRoot>/:/home/data/DitM \
+-v <ThesisRoot>/examples/:/home/mscnn/examples/ \
+-v <ThesisRoot>/data/:/home/mscnn/data/ \
+-v <models>/:/home/mscnn/models/ caffe:MSCNN
+```
 
-Download pre-trained MS-CNN models
-```Shell
-cd $MSCNN_ROOT/examples/kitti_car/
-sh fetch_mscnn_car_model.sh
-``` 
-This will download the pretrained model for KITTI car into `$MSCNN_ROOT/examples/kitti_car/mscnn-8s-768-trainval-pretrained/`. You can produce exactly the same results as described in our paper with these pretrained models.
+Within the docker container one finds a folder structure similar to
+&lt;ThesisRoot&gt;/. To run a training session go to
+examples/{kitti\_car|DitM}/&lt;OneExperiment&gt;/. Within there is
+mscnn\_train.sh which runs the training. Please adapt the script to the
+number of GPUs by changing the –gpu tag to the IDs of the ones to be
+used.\
+A log of the progress will be written to stdout, which one may want to
+save to a log file. Lines with “Loss = ” within give a good sense of
+training progress. After the training is done one will find a file named
+mscnn\_kitti\_train\_2nd\_iter\_25000.caffemodel within the folder which
+are the trained weights.
 
-### Testing Demo (KITTI car)
+Evaluation of Results
+---------------------
 
-Once the pretrained models or models trained by yourself are available, you can use the MATLAB script `run_mscnn_detection.m` under `$MSCNN_ROOT/examples/kitti_car/` to obtain the detection and proposal results. Set the right dataset path and choose the model that you want to test in the demo script. The default setting is to test the pretrained model. The final results will be saved as .txt files.
+The evaluation of the trained networks with the dockerimages is a two
+stage process, allowing the more demanding part (inference) to be run on
+a powerful server off-site if necessary. The docker-image handles
+forwarding of images through the trained network and produces
+intermediate output in form of .tar.gz archives. They may than be
+analyzed with the MATLAB script provided in
+&lt;ThesisRoot&gt;/examples/{kitti\_car|DitM}/.\
+Therefore the following steps are to be performed:
 
-### KITTI Evaluation
+1.  Make the following directories and ensure about 10 GB of free disk
+    space: &lt;tmp&gt;/ and &lt;output&gt;/
 
-Compile `evaluate_object.cpp` under `$MSCNN_ROOT/examples/kitti_result/eval/` by yourself. Use `writeDetForEval.m` under `$MSCNN_ROOT/examples/kitti_result/` to transform the detection results into KITTI data format and evaluate the detection performance. Remember to change the corresponding directories in the evaluation script. 
+2.  Start the container, depending on whether to evaluate on KITTI or
+    DitM
 
-### Disclaimer
+    KITTI:
 
-1. The CPU version is not fully tested. The GPU version is strongly recommended.
- 
-2. Since some changes have been made after ECCV submission, you may not have exactly the same results in the paper by training your own models. But you should have equivelant performance. 
+    :   ``` {.bash language="bash"}
+        sudo nvidia-docker run -ti -v <KITTIRoot>/:/home/data/KITTI/ \
+        -v <ThesisRoot>/examples/:/home/mscnn/examples/ \
+        -v <output>/:/home/output/ -v <tmp>/:/tmp/ caffe:MSCNN
+        ```
 
-3. Since the numbers of training samples vary vastly for different classes, the model robustness varies too (car>ped>cyc).
+    DitM:
 
-4. Although the final results we submitted were from model `mscnn-8s-768-trainval`, our later experiments have shown that `mscnn-7s-576-2x-trainval` can achieve even better performance for car, and 2x faster speed. For ped/cyc however, the performance decreases due to the much less training instances.  
+    :   ``` {.bash language="bash"}
+        sudo nvidia-docker run -ti -v <DitMRoot>/:/home/data/DitM \
+        -v <ThesisRoot>/examples/:/home/mscnn/examples/ \
+        -v  <output>/:/home/output/ -v <tmp>/:/tmp/ caffe:MSCNN
+        ```
 
-5. If the training does not converge or the performance is very bad, try some other random seeds. You should obtain fair performance after a few tries. Due to the randomness, you cann't fully reproduce the same models, but the performance should be close.
+3.  4.  5.  6.  
 
-If you encounter any issue when using our code or model, please let me know.
+[^1]: <http://www.cvlibs.net/download.php?file=data_object_image_2.zip>
+
+[^2]: <http://www.cvlibs.net/download.php?file=data_object_label_2.zip>
+
+[^3]: <http://droplab-files.engin.umich.edu/repro_200k_images.tgz>
+
+[^4]: <https://goo.gl/2mpmw6>
