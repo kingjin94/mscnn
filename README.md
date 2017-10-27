@@ -132,21 +132,27 @@ Therefore the following steps are to be performed:
 
     KITTI:
 
-       ``` 
+       ``` {.bash language="bash"} 
         sudo nvidia-docker run -ti -v <KITTIRoot>/:/home/data/KITTI/ \
         -v <ThesisRoot>/examples/:/home/mscnn/examples/ \
         -v <output>/:/home/output/ -v <tmp>/:/tmp/ caffe:MSCNN
-        ```
+       ```
 
     DitM:
 
-       ``` 
+       ``` {.bash language="bash"}
         sudo nvidia-docker run -ti -v <DitMRoot>/:/home/data/DitM \
         -v <ThesisRoot>/examples/:/home/mscnn/examples/ \
         -v  <output>/:/home/output/ -v <tmp>/:/tmp/ caffe:MSCNN
-        ```
+       ```
 
-3.  4.  5.  6.  
+3.  Within the container go to examples/\{kitti\_car|DitM\}/ and run \lstinline[language=bash,breaklines]{python run_elementary_detection.py <FolderWithWantedNetwork> <FilenameOfWantedNetwork>}. If you want to do crossevaluation you have to adapt Line 61f within run\_elementary\_detection.py to the correct image folder!
+
+4.  After the python script finished the output will have been saved to <output>/. Copy the archived results from output/ to <ThesisRoot>/examples/\{kitti\_car|DitM\}/ outputDetection/, depending on whether evaluations are done on KITTI or DitM
+
+5.  Run evalOutputDetection within the right folder with MATLAB
+
+6.  The final result (recall-precision over the validation set) will be saved to <ThesisRoot>/examples/\{kitti\_car|DitM\}/detections/<NameOfIntermediateResult>/plot/
 
 [^1]: <http://www.cvlibs.net/download.php?file=data_object_image_2.zip>
 
