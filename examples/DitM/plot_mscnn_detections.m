@@ -1,5 +1,5 @@
 %% read detections
-detections = dlmread('detections/detections_onDitM_mscnn-7s-384-finetune_from_kitti_mscnn_kitti_train_2nd_iter_8000.caffemodel.txt');
+detections = dlmread('detections/detections_mscnn-7s-384_mscnn_kitti_train_2nd_iter_25000.caffemodel.txt');
 %detections(:,1) = detections(:,1)+1;
 
 %% read groundtruth
@@ -7,7 +7,7 @@ kitti_dir = '/home/matthias/Desktop/GTA_KITTI/';
 gt_dir = '../../data/DitM/label_2_day/';
 
 %% read dataset
-image_list = dlmread('../../data/DitM/ImageSets_day/val.txt');
+image_list = dlmread('../../data/DitM/ImageSets_day/test.txt');
 
 %% set KITTI dataset directory
 image_dir = '../../data/DitM/image_2_day/'; %[kitti_dir 'training/image_2/'];
@@ -26,13 +26,14 @@ while(go_on)
     disp([image_dir num2str(image_list(i),7) '.png'])
     
     %% Show detection
-    threshold = 0.2;
+    threshold = 0.5;
     det_here = detections(detections(:,1)==image_list(i),:) %get boxes of picture i
     det_here = det_here(det_here(:,6)>threshold, :);
     for j = 1:size(det_here,1)
         box = det_here(j,:);    % #pic, x, y, width, height, propability
-        if(box(6) > 0.2)
+        if(box(6) > threshold)
             rectangle('Position', [box(2:5)],'EdgeColor',[1 0 0] * box(6));
+            text(box(2),box(3)-15,[num2str(box(6)*100, 3)],'Color','red','FontSize',20);
         end
     end
     

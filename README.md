@@ -25,10 +25,10 @@ NVIDIA-Docker please build the Docker-image with the dockerfile found in
 Regardless of the chosen way to install the software additionally the
 used datasets are needed:
 
--   KITTI Object Detection Evaluation 2012  [@KITTIWebsite]: Left color
+-   KITTI Object Detection Evaluation 2012  [http://www.cvlibs.net/datasets/kitti/eval_object.php]: Left color
     images[^1] and Labels[^2]
 
--   DitM  [@DitMWebsite]: 200k Archive images[^3] or Subset used in this
+-   DitM  [https://fcav.engin.umich.edu/sim-dataset/]: 200k Archive images[^3] or Subset used in this
     thesis[^4]
 
 -   DitM labels in KITTI format:
@@ -40,7 +40,7 @@ used datasets are needed:
 -   Windowfiles (to be found under:
     &lt;ThesisRoot&gt;/data/{KITTI|DitM}/window\_files/)
 
--   VGG\_16  [@VGG16]: <https://goo.gl/LCzWV8>, to be saved in
+-   VGG\_16  [http://www.robots.ox.ac.uk/~vgg/research/very_deep/]: <https://goo.gl/LCzWV8>, to be saved in
     &lt;models&gt;/
 
 Both datasets are expected to be in folders named &lt;KITTIRoot&gt;/ and
@@ -132,7 +132,7 @@ Therefore the following steps are to be performed:
 
     KITTI:
 
-    :   ``` {.bash language="bash"}
+       ``` 
         sudo nvidia-docker run -ti -v <KITTIRoot>/:/home/data/KITTI/ \
         -v <ThesisRoot>/examples/:/home/mscnn/examples/ \
         -v <output>/:/home/output/ -v <tmp>/:/tmp/ caffe:MSCNN
@@ -140,7 +140,7 @@ Therefore the following steps are to be performed:
 
     DitM:
 
-    :   ``` {.bash language="bash"}
+       ``` 
         sudo nvidia-docker run -ti -v <DitMRoot>/:/home/data/DitM \
         -v <ThesisRoot>/examples/:/home/mscnn/examples/ \
         -v  <output>/:/home/output/ -v <tmp>/:/tmp/ caffe:MSCNN
