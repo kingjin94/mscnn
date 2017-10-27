@@ -1,4 +1,4 @@
-Manual MSCNN {#app:man}
+Manual MSCNN
 ============
 
 The following sections will describe how one may reproduce the
