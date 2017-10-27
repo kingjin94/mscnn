@@ -1,5 +1,12 @@
+%% Helps to plot and debug detections
+% Reads the long list files of detections from run_mscnn_detection or
+% finish detection after server and displays corresponding images, g.t.
+% (green) and found objects (red). Furthermore adds likelyhood of each
+% detection. Detection with < 20 % likelihodd are not ploted to reduce
+% clutter
+
 %% read detections
-detections = dlmread('detections/mscnn-7s-384-train_car_val.txt');
+detections = dlmread('detections/detections_mscnn-7s-384_mscnn_kitti_train_2nd_iter_25000.caffemodel.txt');
 %detections(:,1) = detections(:,1)+1;
 
 %% read groundtruth
@@ -23,12 +30,13 @@ while(go_on)
 
     %% Show detection
     threshold = 0.2;
-    det_here = detections(detections(:,1)==i,:) %get boxes of picture i
+    det_here = detections(detections(:,1)==i,:); %get boxes of picture i
     det_here = det_here(det_here(:,6)>threshold, :);
     for j = 1:size(det_here,1)
         box = det_here(j,:);    % #pic, x, y, width, height, propability
         if(box(6) > 0.2)
             rectangle('Position', [box(2:5)],'EdgeColor',[1 0 0] * box(6));
+            text(box(2),box(3)-15,[num2str(box(6)*100, 3)],'Color','red','FontSize',20);
         end
     end
     
@@ -52,6 +60,6 @@ while(go_on)
     end
     
     waitfor(f)
-    i = i+1;
+    i = i+1
     if(i>nImg) i = 1; end
 end
